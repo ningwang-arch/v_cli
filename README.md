@@ -1,1 +1,1 @@
-# v_cli
+v2ray客户端的cli版本,使用python语言
