@@ -3,6 +3,7 @@ import base64
 import urllib3
 import os
 import json
+import shutil
 from vm2obs import convert
 
 
@@ -61,6 +62,8 @@ def convert_subcribe(str_b64):
         str_b64 += "=" * (4 - blen % 4)
     str_links = base64.b64decode(str_b64).decode()
     v_list = str_links.split('\r\n')
+    if os.listdir('connections'):
+        shutil.rmtree('connections')
     for item in v_list:
         if item == "":
             continue
@@ -69,7 +72,7 @@ def convert_subcribe(str_b64):
             if ran_str == '' or node_name == '':
                 continue
             connections[ran_str] = node_name
-    with open('connections.json', mode='a', encoding='utf-8') as f:
+    with open('connections.json', mode='w', encoding='utf-8') as f:
         f.write(json.dumps(connections, indent=4, ensure_ascii=False))
     print("Update successfully")
 

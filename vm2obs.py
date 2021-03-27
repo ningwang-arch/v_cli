@@ -8,7 +8,16 @@ import random
 vmscheme = "vmess://"
 CONNECTIONS_DIR = "connections/"
 
-ret = {"outbounds": [{}]}
+ret = {"outbounds": [
+    {},
+    {
+        "protocol": "freedom",
+        "tag": "direct",
+        "settings": {
+            "domainStrategy": "UseIP"
+        }
+    }
+]}
 TPL = {}
 TPL["outbounds"] = [
     {
