@@ -247,7 +247,7 @@ def check_link(vmess):
 def convert(vmess_link):
     vc = parsevmess(vmess_link)
     if not check_link(vc):
-        return ""
+        return "", ""
     ret['outbounds'][0] = vmess2outbounds(TPL["outbounds"][0], vc)
     if not os.path.exists(CONNECTIONS_DIR):
         os.makedirs(CONNECTIONS_DIR)

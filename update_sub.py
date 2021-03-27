@@ -2,6 +2,7 @@ import re
 import base64
 import urllib3
 import os
+import json
 from vm2obs import convert
 
 
@@ -37,16 +38,7 @@ def update_from_txt():
                 return
         else:
             str_b64 = subscribe
-    blen = len(str_b64)
-    if blen % 4 > 0:
-        str_b64 += "=" * (4 - blen % 4)
-    str_links = base64.b64decode(str_b64).decode()
-    v_list = str_links.split('\r\n')
-    for item in v_list:
-        if item == "":
-            continue
-        else:
-            convert(item)
+    convert_subcribe(str_b64)
 
 
 def update_from_url(url):
@@ -59,7 +51,12 @@ def update_from_url(url):
     else:
         print('Invalid subscription link')
         return
+    convert_subcribe(str_b64)
+
+
+def convert_subcribe(str_b64):
     blen = len(str_b64)
+    connections = {}
     if blen % 4 > 0:
         str_b64 += "=" * (4 - blen % 4)
     str_links = base64.b64decode(str_b64).decode()
@@ -68,8 +65,14 @@ def update_from_url(url):
         if item == "":
             continue
         else:
-            convert(item)
+            ran_str, node_name = convert(item)
+            # TODO
+            if ran_str == '' or node_name == '':
+                continue
+            connections[ran_str] = node_name
+    with open('connections.json', mode='a', encoding='utf-8') as f:
+        f.write(json.dumps(connections, indent=4, ensure_ascii=False))
 
 
 if __name__ == '__main__':
-    print(force_input())
+    update_from_txt()
