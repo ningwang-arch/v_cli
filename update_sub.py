@@ -34,7 +34,7 @@ def update_from_txt():
             if response.status == 200:
                 str_b64 = response.data.decode()
             else:
-                print('Invalid subscription link')
+                print('Invalid subscription link or network error. Update failed')
                 return
         else:
             str_b64 = subscribe
@@ -49,7 +49,7 @@ def update_from_url(url):
     if response.status == 200:
         str_b64 = response.data.decode()
     else:
-        print('Invalid subscription link')
+        print('Invalid subscription link or network error. Update failed')
         return
     convert_subcribe(str_b64)
 
@@ -66,12 +66,12 @@ def convert_subcribe(str_b64):
             continue
         else:
             ran_str, node_name = convert(item)
-            # TODO
             if ran_str == '' or node_name == '':
                 continue
             connections[ran_str] = node_name
     with open('connections.json', mode='a', encoding='utf-8') as f:
         f.write(json.dumps(connections, indent=4, ensure_ascii=False))
+    print("Update successfully")
 
 
 if __name__ == '__main__':

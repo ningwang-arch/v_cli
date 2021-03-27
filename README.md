@@ -10,7 +10,7 @@
 
 ​					--list_all       列出所有节点
 
-​					--connect  <choice> -c <choice>	启动v2ray并链接至指定链接，若无<choice>参数，默认使用上次链接
+​					--connect <choice> -c <choice>	启动v2ray并链接至指定链接，若无<choice>参数，默认使用上次链接
 
 ​					--list_current  显示当前使用的节点信息
 
