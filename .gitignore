@@ -132,3 +132,6 @@ dmypy.json
 # Personal files
 connections/
 subscribe.txt
+
+# test file
+test/
