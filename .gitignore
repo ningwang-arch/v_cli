@@ -134,6 +134,7 @@ connections/
 subscribe.txt
 connections.json
 config.json
+lastconnect.json
 
 # test file
 test/

@@ -62,7 +62,7 @@ def convert_subcribe(str_b64):
         str_b64 += "=" * (4 - blen % 4)
     str_links = base64.b64decode(str_b64).decode()
     v_list = str_links.split('\r\n')
-    if os.path.exists('connections'):
+    if not os.path.exists('connections'):
         os.makedirs('connections')
     if os.listdir('connections'):
         shutil.rmtree('connections')
@@ -77,7 +77,3 @@ def convert_subcribe(str_b64):
     with open('connections.json', mode='w', encoding='utf-8') as f:
         f.write(json.dumps(connections, indent=4, ensure_ascii=False))
     print("Update successfully")
-
-
-if __name__ == '__main__':
-    update_from_txt()

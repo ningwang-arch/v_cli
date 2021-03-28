@@ -3,7 +3,7 @@ import base64
 import os
 import string
 import random
-from settings import load_TPL, CONNECTIONS_DIR
+from settings import load_TPL, CONNECTIONS_DIR, check_link
 
 
 vmscheme = "vmess://"
@@ -114,14 +114,7 @@ def parsevmess(vmesslink):
         raise Exception("vmess link invalid")
 
 
-# 设置节点过滤规则,可自定义
-def check_link(vmess):
-    if vmess['net'] == "tcp":
-        return False
-    return True
-
-
-def convert(vmess_link):
+def convert(vmess_link: str):
     vc = parsevmess(vmess_link)
     if not check_link(vc):
         return "", ""

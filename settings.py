@@ -1,6 +1,7 @@
 import json
 
 CONNECTIONS_DIR = "connections/"
+LAST_CONNECT = "lastconnect.json"
 
 TPL = {}
 TPL["outbounds"] = """
@@ -211,3 +212,10 @@ TPL['socks_in'] = """
 def load_TPL(stype):
     s = TPL[stype]
     return json.loads(s)
+
+
+# 设置节点过滤规则,可自定义
+def check_link(vmess: json):
+    if vmess['net'] == "tcp":
+        return False
+    return True

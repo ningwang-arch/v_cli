@@ -21,7 +21,7 @@ def fill_outbounds(config, node_name):
     return config
 
 
-def config(node_name, http_port=8889, socks_port=1089):
+def config(node_name, http_port, socks_port):
     config = fill_outbounds(fill_inbounds(http_port, socks_port), node_name)
     with open('config.json', 'w') as f:
         f.write(json.dumps(config, indent=4, ensure_ascii=False))
