@@ -4,6 +4,7 @@ import urllib3
 import os
 import json
 import shutil
+
 from vm2obs import convert
 
 
@@ -62,6 +63,8 @@ def convert_subcribe(str_b64):
         str_b64 += "=" * (4 - blen % 4)
     str_links = base64.b64decode(str_b64).decode()
     v_list = str_links.split('\r\n')
+    if len(v_list) == 1:
+        v_list = str_links.split('\n')
     if not os.path.exists('connections'):
         os.makedirs('connections')
     if os.listdir('connections'):

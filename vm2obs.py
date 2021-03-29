@@ -107,7 +107,6 @@ def parsevmess(vmesslink):
         blen = len(bs)
         if blen % 4 > 0:
             bs += "=" * (4 - blen % 4)
-
         vms = base64.b64decode(bs).decode()
         return json.loads(vms)
     else:

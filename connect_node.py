@@ -1,8 +1,7 @@
 import json
 import os
 import subprocess
-import sys
-from settings import LAST_CONNECT
+from settings import CONNECTIONS_DIR, LAST_CONNECT
 from fill_config import config
 
 
@@ -24,9 +23,11 @@ def disconnect():
                              stdout=subprocess.PIPE, shell=False)
     pid = child.communicate()[0]
     if not pid:
-        print("no target pid to kill,please check")
+        print("No target pid to kill,please check")
         return
     result = os.system("kill -9 "+pid.decode())
+    if os.path.exists('connect.log'):
+        os.remove('connect.log')
     if result == 0:
         print("Disconnect successfully")
     else:
@@ -39,10 +40,13 @@ def current():
         return
     with open(LAST_CONNECT, 'r') as f:
         last_dict = json.load(f)
-    if 'node_name' not in last_dict:
+    if 'node' not in last_dict:
         print("No connection currently!")
     else:
-        print("Current connect: "+last_dict['node_name'])
+        with open("connections.json", mode='r') as f:
+            node_dict = json.load(f)
+        node = last_dict['node']
+        print("Current connect: "+node_dict[node])
 
 
 def convet_num_to_nodestr(choice):
@@ -62,7 +66,11 @@ def convet_num_to_nodestr(choice):
             return keys[i]
 
 
-def connect(choice, path="v2ray", http_port=8889, socks_port=1089):
+def connect(choice, path="/usr/bin/v2ray", http_port=8889, socks_port=1089):
+    path = path.replace("\\", '/')
+    if (("/" in path) and (not os.path.exists(path))):
+        print("No such file!")
+        return
     child = subprocess.Popen(["pgrep", "-x", "v2ray"],
                              stdout=subprocess.PIPE, shell=False)
     pid = child.communicate()[0]
@@ -70,7 +78,11 @@ def connect(choice, path="v2ray", http_port=8889, socks_port=1089):
         result = os.system("kill -9 "+pid.decode())
         if result != 0:
             print("Port occupied or no executable program")
+            return
     node_name = convet_num_to_nodestr(choice)
+    connect_info = {"node": node_name, "path": path}
+    with open('lastconnect.json', 'w') as f:
+        f.write(json.dumps(connect_info, indent=4))
     if node_name == "":
         print('Invalid choice')
         return
@@ -79,5 +91,9 @@ def connect(choice, path="v2ray", http_port=8889, socks_port=1089):
     print("Connect successfully")
 
 
-if __name__ == '__main__':
-    connect(20)
+def connect_default():
+    with open('lastconnect.json', 'r') as f:
+        info = json.load(f)
+    path = info['path']
+    os.system("nohup %s -config config.json > connect.log 2>&1 &" % path)
+    print("Connect successfully")
