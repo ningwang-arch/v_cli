@@ -45,7 +45,7 @@ def update_from_txt():
 
 
 def update_from_url(url):
-    with open(sub_path, 'r') as f:
+    with open(sub_path, 'w',encoding='utf-8') as f:
         f.write(url)
     http = urllib3.PoolManager()
     response = http.request('GET', url)
