@@ -14,6 +14,7 @@ sub_path = 'subscribe.txt'
 def force_input():
     subscribe = ''
     while subscribe == '':
+        print('Please input subscribe: ', end="")
         subscribe = input()
     return subscribe
 
