@@ -87,7 +87,7 @@ def connect(choice, path="/usr/bin/v2ray", http_port=8889, socks_port=1089):
         print('Invalid choice')
         return
     config(node_name, http_port, socks_port)
-    os.system("nohup bash %s -config config.json > connect.log 2>&1 &" % path)
+    os.system("exec %s -config config.json > connect.log 2>&1 &" % path)
     print("Connect successfully")
 
 
@@ -95,5 +95,5 @@ def connect_default():
     with open('lastconnect.json', 'r',encoding='utf-8') as f:
         info = json.load(f)
     path = info['path']
-    os.system("nohup %s -config config.json > connect.log 2>&1 &" % path)
+    os.system("exec %s -config config.json > connect.log 2>&1 &" % path)
     print("Connect successfully")
