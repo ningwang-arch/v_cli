@@ -1,7 +1,19 @@
 from parser_create import create_parser
 import connect_node
 import sys
+import json
+import os
 import update_sub
+
+
+def get_default_path():
+    if os.path.exists('lastconnect.json'):
+        with open('lastconnect.json','r') as f:
+            last_dict=json.load(f)
+        path=last_dict['path']
+    else:
+        path='v2ray'
+    return path
 
 if __name__ == '__main__':
     parser = create_parser()
@@ -26,7 +38,7 @@ if __name__ == '__main__':
                 option.http_port) if option.http_port is not None else 8889
             socks_port = int(
                 option.socks_port) if option.socks_port is not None else 1089
-            path = option.path if option.path is not None else "v2ray"
+            path = option.path if option.path is not None else get_default_path()
             connect_node.connect(int(option.connect),
                                  path, http_port, socks_port)
         elif option.connect is None:
