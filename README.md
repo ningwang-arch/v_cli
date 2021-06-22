@@ -1,4 +1,19 @@
+### Update
+
+2021.06.22
+
+​	完善了lastconnect.json中的链接信息
+
+#### ToDo
+
+​	增加多订阅支持和ss支持
+
+
+
+
 # 对所有字符串用引号包裹!!!!!
+
+
 
 For Linux Only
 ### 模式

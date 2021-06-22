@@ -6,16 +6,20 @@ import os
 import update_sub
 
 
-def get_default_path():
+def get_default_config():
     if os.path.exists('lastconnect.json'):
-        with open('lastconnect.json','r') as f:
-            last_dict=json.load(f)
-        path=last_dict['path']
+        with open('lastconnect.json', 'r') as f:
+            last_dict = json.load(f)
+        path = last_dict['path']
+        http_port = last_dict['http_port']
+        socks_port = last_dict['socks_port']
     else:
-        path='v2ray'
-    return path
+        last_dict = {'path': 'v2ray', 'http_port': 8889, 'socks_port': 1089}
+    return last_dict
+
 
 if __name__ == '__main__':
+    default_config = get_default_config()
     parser = create_parser()
     option = parser.parse_args()
     argv_list = sys.argv
@@ -35,10 +39,10 @@ if __name__ == '__main__':
     elif (('--connect' in argv_list) or ('-c' in argv_list)):
         if option.connect is not None:
             http_port = int(
-                option.http_port) if option.http_port is not None else 8889
+                option.http_port) if option.http_port is not None else default_config['http_port']
             socks_port = int(
-                option.socks_port) if option.socks_port is not None else 1089
-            path = option.path if option.path is not None else get_default_path()
+                option.socks_port) if option.socks_port is not None else default_config['socks_port']
+            path = option.path if option.path is not None else default_config['path']
             connect_node.connect(int(option.connect),
                                  path, http_port, socks_port)
         elif option.connect is None:

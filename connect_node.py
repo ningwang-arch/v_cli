@@ -11,7 +11,7 @@ def print_node():
     if not os.path.exists(path):
         print('No node, please update the subscription and try again')
         return
-    with open(path, 'r',encoding='utf-8') as f:
+    with open(path, 'r', encoding='utf-8') as f:
         connections = json.load(f)
     values = list(connections.values())
     for i in range(len(values)):
@@ -38,7 +38,7 @@ def current():
     if ((not os.path.exists(LAST_CONNECT)) or (not os.path.getsize(LAST_CONNECT))):
         print("No connection currently!")
         return
-    with open(LAST_CONNECT, 'r',encoding='utf-8') as f:
+    with open(LAST_CONNECT, 'r', encoding='utf-8') as f:
         last_dict = json.load(f)
     if 'node' not in last_dict:
         print("No connection currently!")
@@ -80,7 +80,8 @@ def connect(choice, path="/usr/bin/v2ray", http_port=8889, socks_port=1089):
             print("Port occupied or no executable program")
             return
     node_name = convet_num_to_nodestr(choice)
-    connect_info = {"node": node_name, "path": path}
+    connect_info = {"node": node_name, "path": path,
+                    "http_port": http_port, "socks_port": socks_port}
     with open('lastconnect.json', 'w') as f:
         f.write(json.dumps(connect_info, indent=4))
     if node_name == "":
@@ -92,7 +93,7 @@ def connect(choice, path="/usr/bin/v2ray", http_port=8889, socks_port=1089):
 
 
 def connect_default():
-    with open('lastconnect.json', 'r',encoding='utf-8') as f:
+    with open('lastconnect.json', 'r', encoding='utf-8') as f:
         info = json.load(f)
     path = info['path']
     os.system("exec %s -config config.json > connect.log 2>&1 &" % path)
