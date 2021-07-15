@@ -1,13 +1,17 @@
 import json
 import os
 import subprocess
-from settings import CONNECTIONS_DIR, LAST_CONNECT
+from settings import CONNECTIONS_DIR, LAST_CONNECT, CONFIG_DIR
 from fill_config import config
 
+config_path = CONFIG_DIR+'config.json'
+log_path = CONFIG_DIR+'connect.log'
 
 # 从connections.json中加载节点名称并赋予序号
+
+
 def print_node():
-    path = 'connections.json'
+    path = CONFIG_DIR+'connections.json'
     if not os.path.exists(path):
         print('No node, please update the subscription and try again')
         return
@@ -26,8 +30,8 @@ def disconnect():
         print("No target pid to kill,please check")
         return
     result = os.system("kill -9 "+pid.decode())
-    if os.path.exists('connect.log'):
-        os.remove('connect.log')
+    if os.path.exists(CONFIG_DIR+'connect.log'):
+        os.remove(CONFIG_DIR+'connect.log')
     if result == 0:
         print("Disconnect successfully")
     else:
@@ -43,14 +47,14 @@ def current():
     if 'node' not in last_dict:
         print("No connection currently!")
     else:
-        with open("connections.json", mode='r') as f:
+        with open(LAST_CONNECT, mode='r') as f:
             node_dict = json.load(f)
         node = last_dict['node']
         print("Current connect: "+node_dict[node])
 
 
 def convet_num_to_nodestr(choice):
-    path = 'connections.json'
+    path = CONFIG_DIR+'connections.json'
     if not os.path.exists(path):
         print('No node, please update the subscription and try again')
         return
@@ -68,6 +72,7 @@ def convet_num_to_nodestr(choice):
 
 def connect(choice, path="/usr/bin/v2ray", http_port=8889, socks_port=1089):
     path = path.replace("\\", '/')
+
     if (("/" in path) and (not os.path.exists(path))):
         print("No such file!")
         return
@@ -82,19 +87,19 @@ def connect(choice, path="/usr/bin/v2ray", http_port=8889, socks_port=1089):
     node_name = convet_num_to_nodestr(choice)
     connect_info = {"node": node_name, "path": path,
                     "http_port": http_port, "socks_port": socks_port}
-    with open('lastconnect.json', 'w') as f:
+    with open(CONFIG_DIR+'lastconnect.json', 'w') as f:
         f.write(json.dumps(connect_info, indent=4))
     if node_name == "":
         print('Invalid choice')
         return
     config(node_name, http_port, socks_port)
-    os.system("exec %s -config config.json > connect.log 2>&1 &" % path)
+    os.system("exec %s -config %s > %s 2>&1 &" % (path, config_path, log_path))
     print("Connect successfully")
 
 
 def connect_default():
-    with open('lastconnect.json', 'r', encoding='utf-8') as f:
+    with open(CONFIG_DIR+'lastconnect.json', 'r', encoding='utf-8') as f:
         info = json.load(f)
     path = info['path']
-    os.system("exec %s -config config.json > connect.log 2>&1 &" % path)
+    os.system("exec %s -config %s > %s 2>&1 &" % (path, config_path, log_path))
     print("Connect successfully")

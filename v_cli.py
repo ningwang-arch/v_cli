@@ -4,11 +4,14 @@ import sys
 import json
 import os
 import update_sub
+from settings import CONNECTIONS_DIR
 
 
 def get_default_config():
-    if os.path.exists('lastconnect.json'):
-        with open('lastconnect.json', 'r') as f:
+    if not os.path.exists(CONNECTIONS_DIR):
+        os.makedirs(CONNECTIONS_DIR)
+    if os.path.exists(CONNECTIONS_DIR+'lastconnect.json'):
+        with open(CONNECTIONS_DIR+'lastconnect.json', 'r') as f:
             last_dict = json.load(f)
         path = last_dict['path']
         http_port = last_dict['http_port']

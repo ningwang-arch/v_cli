@@ -1,5 +1,5 @@
 import json
-from settings import load_TPL, CONNECTIONS_DIR
+from settings import load_TPL, CONNECTIONS_DIR, CONFIG_DIR
 
 
 def fill_inbounds(http_port, socks_port):
@@ -23,5 +23,5 @@ def fill_outbounds(config, node_name):
 
 def config(node_name, http_port, socks_port):
     config = fill_outbounds(fill_inbounds(http_port, socks_port), node_name)
-    with open('config.json', 'w') as f:
+    with open(CONFIG_DIR+'config.json', 'w') as f:
         f.write(json.dumps(config, indent=4, ensure_ascii=False))

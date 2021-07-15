@@ -6,9 +6,9 @@ import json
 import shutil
 
 from vm2obs import convert
+from settings import CONFIG_DIR, CONNECTIONS_DIR
 
-
-sub_path = 'subscribe.txt'
+sub_path = CONFIG_DIR + 'subscribe.txt'
 
 
 def force_input():
@@ -45,7 +45,7 @@ def update_from_txt():
 
 
 def update_from_url(url):
-    with open(sub_path, 'w',encoding='utf-8') as f:
+    with open(sub_path, 'w', encoding='utf-8') as f:
         f.write(url)
     http = urllib3.PoolManager()
     response = http.request('GET', url)
@@ -54,7 +54,8 @@ def update_from_url(url):
     else:
         print('Invalid subscription link or network error. Update failed')
         return
-    convert_subcribe(str_b64)
+    node_list = convert_subcribe(str_b64)
+    print("Update successfully")
 
 
 def convert_subcribe(str_b64):
@@ -66,10 +67,11 @@ def convert_subcribe(str_b64):
     v_list = str_links.split('\r\n')
     if len(v_list) == 1:
         v_list = str_links.split('\n')
-    if not os.path.exists('connections'):
-        os.makedirs('connections')
-    if os.listdir('connections'):
-        shutil.rmtree('connections')
+    if not os.path.exists(CONNECTIONS_DIR):
+        os.makedirs(CONNECTIONS_DIR)
+    if os.listdir(CONNECTIONS_DIR):
+        shutil.rmtree(CONNECTIONS_DIR)
+    node_list = []
     for item in v_list:
         if item == "":
             continue
@@ -78,6 +80,7 @@ def convert_subcribe(str_b64):
             if ran_str == '' or node_name == '':
                 continue
             connections[ran_str] = node_name
-    with open('connections.json', mode='w', encoding='utf-8') as f:
+            node_list.append(node_name)
+    with open(CONFIG_DIR+'connections.json', mode='w', encoding='utf-8') as f:
         f.write(json.dumps(connections, indent=4, ensure_ascii=False))
-    print("Update successfully")
+    return node_list

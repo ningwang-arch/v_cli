@@ -1,7 +1,10 @@
 import json
+import os
 
-CONNECTIONS_DIR = "connections/"
-LAST_CONNECT = "lastconnect.json"
+CONFIG_DIR = os.environ['HOME']+'/.config/v_cli/'
+
+CONNECTIONS_DIR = CONFIG_DIR+"connections/"
+LAST_CONNECT = CONFIG_DIR+"lastconnect.json"
 
 TPL = {}
 TPL["outbounds"] = """
