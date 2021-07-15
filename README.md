@@ -36,7 +36,9 @@ For Linux Only
             --path [path of v2ray]  			v2ray可执行文件路径，无参数则默认调用系统路径
 
 #####  		      2.1. --update  [url]  / -u [url]
-        更新订阅,若url参数不存在，则先从当前路径下的subscribe.txt读取链接,若subscribe.txt不存在，则提醒用户输入订阅链接，并将链接保存至  	subscribe.txt;若存在url参数，则从提供的url中读取订阅，并将url保存至subscribe.txt;  同时解析链接并获取节点信息保存至对应的config文件
+        更新订阅,若url参数不存在，则先从当前路径下的subscribe.txt读取链接,若subscribe.txt不存在，则提醒用户输入订阅链接，并将链接保存至 subscribe.txt;
+        若存在url参数，则从提供的url中读取订阅，并将url保存至 subscribe.txt; 
+        同时解析链接并获取节点信息保存至对应的config文件
 
 ##### 			2.2. --list_all
         从已有文件中读取节点名称排序并打印
