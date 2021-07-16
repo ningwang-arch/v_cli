@@ -1,8 +1,18 @@
 import json
 import os
+import sys
 
-CONFIG_DIR = os.environ['HOME']+'/.config/v_cli/'
 
+def get_home_path() -> str:
+    env_dict = os.environ
+    if sys.platform == "win32":
+        return env_dict['HOMEDRIVE']+(env_dict['HOMEPATH'].replace('\\', '/'))
+    else:
+        return env_dict['HOMEPATH']
+
+
+CONFIG_DIR = get_home_path()+'/.config/v_cli/'
+PLATFORM = sys.platform
 CONNECTIONS_DIR = CONFIG_DIR+"connections/"
 LAST_CONNECT = CONFIG_DIR+"lastconnect.json"
 

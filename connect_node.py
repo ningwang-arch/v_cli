@@ -1,7 +1,8 @@
 import json
 import os
+import sys
 import subprocess
-from settings import CONNECTIONS_DIR, LAST_CONNECT, CONFIG_DIR
+from settings import CONNECTIONS_DIR, LAST_CONNECT, CONFIG_DIR, PLATFORM
 from fill_config import config
 
 config_path = CONFIG_DIR+'config.json'
@@ -23,19 +24,20 @@ def print_node():
 
 
 def disconnect():
-    child = subprocess.Popen(["pgrep", "-x", "v2ray"],
-                             stdout=subprocess.PIPE, shell=False)
-    pid = child.communicate()[0]
-    if not pid:
-        print("No target pid to kill,please check")
-        return
-    result = os.system("kill -9 "+pid.decode())
-    if os.path.exists(CONFIG_DIR+'connect.log'):
-        os.remove(CONFIG_DIR+'connect.log')
-    if result == 0:
-        print("Disconnect successfully")
-    else:
-        print("Failed to disconnect, please kill the process manually")
+    if PLATFORM == 'linux':
+        result = os.system("pkill v2ray")
+        if os.path.exists(CONFIG_DIR+'connect.log'):
+            os.remove(CONFIG_DIR+'connect.log')
+        if result == 0:
+            print("Disconnect successfully")
+        else:
+            print("Failed to disconnect, please kill the process manually")
+    elif PLATFORM == 'win32':
+        result = os.system('taskkill /f /im v2ray.exe >nul 2>nul')
+        if result != 0:
+            print('No such task or failed to disconnect!')
+        else:
+            print("Disconnect successfully")
 
 
 def current():
@@ -58,7 +60,7 @@ def convet_num_to_nodestr(choice):
     if not os.path.exists(path):
         print('No node, please update the subscription and try again')
         return
-    with open(path, 'r') as f:
+    with open(path, 'r', encoding='utf-8') as f:
         connections = json.load(f)
     values = list(connections.values())
     node_name = values[choice-1]
@@ -70,20 +72,23 @@ def convet_num_to_nodestr(choice):
             return keys[i]
 
 
-def connect(choice, path="/usr/bin/v2ray", http_port=8889, socks_port=1089):
+def connect(choice, path="/usr/bin/v2ray", http_port=8889, socks_port=11223):
     path = path.replace("\\", '/')
 
     if (("/" in path) and (not os.path.exists(path))):
         print("No such file!")
         return
-    child = subprocess.Popen(["pgrep", "-x", "v2ray"],
-                             stdout=subprocess.PIPE, shell=False)
-    pid = child.communicate()[0]
-    if pid:
-        result = os.system("kill -9 "+pid.decode())
+    if PLATFORM == 'linux':
+        result = os.system("pkill v2ray")
         if result != 0:
             print("Port occupied or no executable program")
             return
+    elif PLATFORM == 'win32':
+        if os.system('tasklist -v | findstr v2ray > NUL') != 1:
+            result = os.system('taskkill /f /im v2ray.exe >nul 2>nul')
+            if result != 0:
+                print('Port occupied or no executable program')
+                return
     node_name = convet_num_to_nodestr(choice)
     connect_info = {"node": node_name, "path": path,
                     "http_port": http_port, "socks_port": socks_port}
@@ -93,7 +98,14 @@ def connect(choice, path="/usr/bin/v2ray", http_port=8889, socks_port=1089):
         print('Invalid choice')
         return
     config(node_name, http_port, socks_port)
-    os.system("exec %s -config %s > %s 2>&1 &" % (path, config_path, log_path))
+    if PLATFORM == 'linux':
+        os.system("exec %s -config %s > %s 2>&1 &" %
+                  (path, config_path, log_path))
+    elif PLATFORM == 'win32':
+        filepath, fullflname = os.path.split(path)
+        os.chdir(filepath)
+        os.system("start /b %s -config %s > %s 2>&1 &" %
+                  (fullflname, config_path, log_path))
     print("Connect successfully")
 
 
@@ -101,5 +113,12 @@ def connect_default():
     with open(CONFIG_DIR+'lastconnect.json', 'r', encoding='utf-8') as f:
         info = json.load(f)
     path = info['path']
-    os.system("exec %s -config %s > %s 2>&1 &" % (path, config_path, log_path))
+    if PLATFORM == 'linux':
+        os.system("exec %s -config %s > %s 2>&1 &" %
+                  (path, config_path, log_path))
+    elif PLATFORM == 'win32':
+        filepath, fullflname = os.path.split(path)
+        os.chdir(filepath)
+        os.system("start /b %s -config %s > %s 2>&1 &" %
+                  (fullflname, config_path, log_path))
     print("Connect successfully")

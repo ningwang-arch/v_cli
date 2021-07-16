@@ -18,7 +18,7 @@ def get_default_config():
         socks_port = last_dict['socks_port']
     else:
         last_dict = {'path': '/usr/bin/v2ray',
-                     'http_port': 8889, 'socks_port': 1089}
+                     'http_port': 8889, 'socks_port': 11223}
     return last_dict
 
 
