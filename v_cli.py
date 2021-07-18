@@ -33,13 +33,15 @@ if __name__ == '__main__':
         connect_node.disconnect()
     elif option.list_all:
         connect_node.print_node()
-    elif option.list_current:
+    elif option.current:
         connect_node.current()
     elif (('--update' in argv_list) or ('-u' in argv_list)):
         if option.update is not None:
-            update_sub.update_from_url(option.update)
+            print('Please input subscription name: ', end='')
+            sub_name = input()
+            update_sub.update_from_url(option.update, sub_name)
         elif option.update is None:
-            update_sub.update_from_txt()
+            update_sub.update_from_sub()
     elif (('--connect' in argv_list) or ('-c' in argv_list)):
         if option.connect is not None:
             http_port = int(

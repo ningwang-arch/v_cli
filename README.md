@@ -1,4 +1,8 @@
 ### Update
+2021.07.18
+
+    增加多订阅支持
+### Update
 2021.07.16
     
     增加了对win的适配
@@ -14,9 +18,11 @@
     
     完善了lastconnect.json中的连接信息
 
-#### Todo
 
-    增加多订阅支持,以及添加程序总入口,便于直接执行
+
+### Todo
+
+    添加程序总入口,便于直接执行;增加删除节点或订阅的功能
 
 
 
@@ -60,15 +66,15 @@
         在指定端口代理http流量，默认8889端口
 
 ##### 			2.7. --socks_port [port]
-        在指定端口代理socks流量，默认1089端口
+        在指定端口代理socks流量，默认11223端口
 
 ### 预计产生文件
-        1.subscribe.txt  			保存订阅链接
+        1 groups.json               订阅保存文件
         2.config.json    			v2ray启动的配置文件
         3.connections (dir)  		各节点信息保存位置(每次更新后清空文件夹并重新填充信息)
         4.lastconnect.json   		上次启动使用的参数
         5.connect.log        		产生的连接日志
-        6. connections.json  		各节点名称与对应文件名
+        6.connections.json  		各节点名称与对应文件名
 
 
 

@@ -1,26 +1,31 @@
 import json
 import os
-import sys
-import subprocess
-from settings import CONNECTIONS_DIR, LAST_CONNECT, CONFIG_DIR, PLATFORM
+from settings import LAST_CONNECT, CONFIG_DIR, PLATFORM
 from fill_config import config
 
 config_path = CONFIG_DIR+'config.json'
 log_path = CONFIG_DIR+'connect.log'
 
-# 从connections.json中加载节点名称并赋予序号
-
 
 def print_node():
-    path = CONFIG_DIR+'connections.json'
-    if not os.path.exists(path):
-        print('No node, please update the subscription and try again')
-        return
-    with open(path, 'r', encoding='utf-8') as f:
-        connections = json.load(f)
-    values = list(connections.values())
-    for i in range(len(values)):
-        print(str(i+1)+"."+values[i])
+    cnt = 1
+    sub_path = CONFIG_DIR+'groups.json'
+    con_path = CONFIG_DIR+'connections.json'
+    conn = {}
+    sub = {}
+    with open(sub_path, 'r', encoding='utf-8') as f:
+        sub = json.load(f)
+    with open(con_path, 'r', encoding='utf-8') as f:
+        conn = json.load(f)
+    # format  {"sub_name":[node_name_list]}
+    info = {}
+    for item in sub.keys():
+        connections = sub[item]['connections']
+        for i in range(len(connections)):
+            connections[i] = str(cnt)+'. '+conn[connections[i]]['displayName']
+            cnt += 1
+        info[sub[item]['displayName']] = connections
+    print(json.dumps(info, indent=4, ensure_ascii=False))
 
 
 def disconnect():
@@ -41,6 +46,7 @@ def disconnect():
 
 
 def current():
+    con_path = CONFIG_DIR+'connections.json'
     if ((not os.path.exists(LAST_CONNECT)) or (not os.path.getsize(LAST_CONNECT))):
         print("No connection currently!")
         return
@@ -49,27 +55,41 @@ def current():
     if 'node' not in last_dict:
         print("No connection currently!")
     else:
-        with open(LAST_CONNECT, mode='r') as f:
+        with open(con_path, mode='r') as f:
             node_dict = json.load(f)
         node = last_dict['node']
-        print("Current connect: "+node_dict[node])
+        if node == "":
+            print('Error!')
+            return
+        print("Current connect: "+node_dict[node]['displayName'])
 
 
 def convet_num_to_nodestr(choice):
-    path = CONFIG_DIR+'connections.json'
-    if not os.path.exists(path):
+    sub_path = CONFIG_DIR+'groups.json'
+    con_path = CONFIG_DIR+'connections.json'
+    if not os.path.exists(con_path):
         print('No node, please update the subscription and try again')
-        return
-    with open(path, 'r', encoding='utf-8') as f:
-        connections = json.load(f)
-    values = list(connections.values())
-    node_name = values[choice-1]
-    keys = list(connections.keys())
-    if choice > len(values):
         return ""
-    for i in range(len(keys)):
-        if connections[keys[i]] == node_name:
-            return keys[i]
+    conn = {}
+    sub = {}
+    with open(sub_path, 'r', encoding='utf-8') as f:
+        sub = json.load(f)
+    with open(con_path, 'r', encoding='utf-8') as f:
+        conn = json.load(f)
+    # format  {"sub_name":[node_name_list]}
+    info = {}
+    values = []
+    for item in sub.keys():
+        connections = sub[item]['connections']
+        for i in range(len(connections)):
+            values.append(conn[connections[i]]['displayName'])
+    if choice > len(values):
+        print('Bad choice!')
+        return ""
+    node_name = values[choice-1]
+    for item in conn.keys():
+        if conn[item]['displayName'] == node_name:
+            return item
 
 
 def connect(choice, path="/usr/bin/v2ray", http_port=8889, socks_port=11223):
@@ -79,10 +99,11 @@ def connect(choice, path="/usr/bin/v2ray", http_port=8889, socks_port=11223):
         print("No such file!")
         return
     if PLATFORM == 'linux':
-        result = os.system("pkill v2ray")
-        if result != 0:
-            print("Port occupied or no executable program")
-            return
+        if os.system('pgrep -x v2ray') == 0:
+            result = os.system("pkill v2ray")
+            if result != 0:
+                print("Port occupied or no executable program")
+                return
     elif PLATFORM == 'win32':
         if os.system('tasklist -v | findstr v2ray > NUL') != 1:
             result = os.system('taskkill /f /im v2ray.exe >nul 2>nul')

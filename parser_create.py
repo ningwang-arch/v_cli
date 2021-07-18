@@ -25,13 +25,13 @@ def create_parser():
 
     parser.add_argument('--socks_port',
                         action='store',
-                        help="Proxy socks traffic on the specified port, if the parameter is not added, the default proxy port 1089")
+                        help="Proxy socks traffic on the specified port, if the parameter is not added, the default proxy port 11223")
 
     parser.add_argument('--list_all',
                         action="store_true",
                         help="List all nodes")
 
-    parser.add_argument('--list_current',
+    parser.add_argument('--current',
                         action="store_true",
                         help="Display the node currently in use")
     parser.add_argument('--path', '-p',
