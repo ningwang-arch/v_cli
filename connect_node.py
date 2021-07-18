@@ -99,7 +99,7 @@ def connect(choice, path="/usr/bin/v2ray", http_port=8889, socks_port=11223):
         print("No such file!")
         return
     if PLATFORM == 'linux':
-        if os.system('pgrep -x v2ray') == 0:
+        if os.system('pgrep -x v2ray >/dev/null 2>&1') == 0:
             result = os.system("pkill v2ray")
             if result != 0:
                 print("Port occupied or no executable program")
