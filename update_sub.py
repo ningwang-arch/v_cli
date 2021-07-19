@@ -11,6 +11,31 @@ from settings import CONFIG_DIR, CONNECTIONS_DIR
 sub_path = CONFIG_DIR + 'groups.json'
 
 
+def load_last_conn_node(**args):
+    last_dict = {}
+    with open(CONFIG_DIR+'lastconnect.json', 'r', encoding='utf-8') as f:
+        last_dict = json.load(f)
+    if not args:
+        return last_dict['node']
+    elif 'node' in args.keys():
+        f.close()
+        last_dict['node'] = args['node']
+        with open(CONFIG_DIR+'lastconnect.json', 'w', encoding='utf-8') as f:
+            f.write(json.dumps(last_dict, indent=4, ensure_ascii=False))
+
+
+def update_lastconnection(**args):
+    conn = {}
+    with open(CONFIG_DIR+'connections.json', 'r', encoding='utf-8') as f:
+        conn = json.load(f)
+    if 'ran_str' == list(args.keys())[0]:
+        return conn[args['ran_str']]['displayName']
+    if 'node_name' == list(args.keys())[0]:
+        for item in conn.keys():
+            if conn[item]['displayName'] == args['node_name']:
+                return item
+
+
 def convert_subcribe(str_b64, node_list=[]):
     blen = len(str_b64)
     con = {}
@@ -45,6 +70,7 @@ def convert_subcribe(str_b64, node_list=[]):
 
 
 def update_from_url(url, sub_name=''):
+    node_name = update_lastconnection(ran_str=load_last_conn_node())
     info = {}
     node_list = []
     http = urllib3.PoolManager()
@@ -69,6 +95,8 @@ def update_from_url(url, sub_name=''):
             with open(sub_path, 'w', encoding='utf-8') as f:
                 f.write(json.dumps(info, indent=4, ensure_ascii=False))
             print("Update subscription %s successfully" % (sub_name))
+            load_last_conn_node(
+                node=update_lastconnection(node_name=node_name))
             return
     info[''.join(random.sample(string.ascii_lowercase, 12))] = {
         'connections': convert_subcribe(str_b64, node_list),
@@ -79,6 +107,7 @@ def update_from_url(url, sub_name=''):
     with open(sub_path, 'w', encoding='utf-8') as f:
         f.write(json.dumps(info, indent=4, ensure_ascii=False))
     print("Update subscription %s successfully" % (sub_name))
+    load_last_conn_node(update_lastconnection(node_name=node_name))
 
 
 def update_from_sub():
