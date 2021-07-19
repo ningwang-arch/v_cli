@@ -11,28 +11,28 @@ from settings import CONFIG_DIR, CONNECTIONS_DIR
 sub_path = CONFIG_DIR + 'groups.json'
 
 
-def load_last_conn_node(**args):
+def load_last_conn_node(**kwargs):
     last_dict = {}
     with open(CONFIG_DIR+'lastconnect.json', 'r', encoding='utf-8') as f:
         last_dict = json.load(f)
-    if not args:
+    if not kwargs:
         return last_dict['node']
-    elif 'node' in args.keys():
+    elif 'node' in kwargs.keys():
         f.close()
-        last_dict['node'] = args['node']
+        last_dict['node'] = kwargs['node']
         with open(CONFIG_DIR+'lastconnect.json', 'w', encoding='utf-8') as f:
             f.write(json.dumps(last_dict, indent=4, ensure_ascii=False))
 
 
-def update_lastconnection(**args):
+def update_lastconnection(**kwargs):
     conn = {}
     with open(CONFIG_DIR+'connections.json', 'r', encoding='utf-8') as f:
         conn = json.load(f)
-    if 'ran_str' == list(args.keys())[0]:
-        return conn[args['ran_str']]['displayName']
-    if 'node_name' == list(args.keys())[0]:
+    if 'ran_str' == list(kwargs.keys())[0]:
+        return conn[kwargs['ran_str']]['displayName']
+    if 'node_name' == list(kwargs.keys())[0]:
         for item in conn.keys():
-            if conn[item]['displayName'] == args['node_name']:
+            if conn[item]['displayName'] == kwargs['node_name']:
                 return item
 
 
