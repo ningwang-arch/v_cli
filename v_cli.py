@@ -1,3 +1,5 @@
+#!/usr/bin/python
+# -*- encoding: utf-8 -*-
 from parser_create import create_parser
 import connect_node
 import sys

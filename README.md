@@ -33,7 +33,8 @@
 
 # 对所有字符串用引号包裹!!!!!
 
-
+####
+requirement: python3 python3-pip
 
 ### 模式
 #### 1.无参数 ：
