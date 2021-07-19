@@ -134,6 +134,11 @@ def connect_default():
     with open(CONFIG_DIR+'lastconnect.json', 'r', encoding='utf-8') as f:
         info = json.load(f)
     path = info['path']
+    path = path.replace("\\", '/')
+
+    if (("/" in path) and (not os.path.exists(path))):
+        print("No such file!")
+        return
     if PLATFORM == 'linux':
         os.system("exec %s -config %s > %s 2>&1 &" %
                   (path, config_path, log_path))
