@@ -7,6 +7,7 @@ import json
 import os
 import update_sub
 from settings import CONNECTIONS_DIR
+import del_func
 
 
 def get_default_config():
@@ -37,6 +38,10 @@ if __name__ == '__main__':
         connect_node.print_node()
     elif option.current:
         connect_node.current()
+    elif option.delete_node:
+        del_func.delete_node(int(option.delete_node))
+    elif option.delete_sub:
+        del_func.delete_sub(option.delete_sub)
     elif (('--update' in argv_list) or ('-u' in argv_list)):
         if option.update is not None:
             print('Please input subscription name: ', end='')

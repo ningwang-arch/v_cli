@@ -110,15 +110,20 @@ def connect(choice, path="/usr/bin/v2ray", http_port=8889, socks_port=11223):
             if result != 0:
                 print('Port occupied or no executable program')
                 return
-    node_name = convet_num_to_nodestr(choice)
-    connect_info = {"node": node_name, "path": path,
+    node_str = convet_num_to_nodestr(choice)
+    node_name = ''
+
+    connect_info = {"node": node_str, "path": path,
                     "http_port": http_port, "socks_port": socks_port}
     with open(CONFIG_DIR+'lastconnect.json', 'w') as f:
         f.write(json.dumps(connect_info, indent=4))
-    if node_name == "":
+    if node_str == "":
         print('Invalid choice')
         return
-    config(node_name, http_port, socks_port)
+    with open(CONFIG_DIR+'connections.json') as f:
+        node_name = json.load(f)[node_str]['displayName']
+        pass
+    config(node_str, http_port, socks_port)
     if PLATFORM == 'linux':
         os.system("exec %s -config %s > %s 2>&1 &" %
                   (path, config_path, log_path))
@@ -127,7 +132,7 @@ def connect(choice, path="/usr/bin/v2ray", http_port=8889, socks_port=11223):
         os.chdir(filepath)
         os.system("start /b %s -config %s > %s 2>&1 &" %
                   (fullflname, config_path, log_path))
-    print("Connect successfully")
+    print("Connect  %s successfully" % (node_name))
 
 
 def connect_default():

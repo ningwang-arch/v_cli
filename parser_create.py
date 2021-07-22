@@ -37,6 +37,15 @@ def create_parser():
     parser.add_argument('--path', '-p',
                         action="store",
                         help="v2ray executable file path, the system path is called by default")
+
+    parser.add_argument('--delete_node',
+                        action='store',
+                        help='Delete node')
+
+    parser.add_argument('--delete_sub',
+                        action='store',
+                        help='Delete a subscription')
+
     return parser
 
 
