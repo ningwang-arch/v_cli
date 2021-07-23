@@ -45,6 +45,9 @@ def create_parser():
     parser.add_argument('--delete_sub',
                         action='store',
                         help='Delete a subscription')
+    parser.add_argument('--show_info',
+                        action='store',
+                        help='Display information about a specific node')
 
     return parser
 

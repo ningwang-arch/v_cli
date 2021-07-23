@@ -1,4 +1,11 @@
 ### Update
+
+2021.07.23
+
+    完善节点显示信息
+
+### Update
+
 2021.07.21
 
     增加节点删除和订阅删除功能
@@ -31,15 +38,15 @@
 
 ### Todo
 
-    完善节点信息显示
-
+    修改代码结构
 
 
 
 # 对所有字符串用引号包裹!!!!!
 
-####
-requirement: python3 python3-pip
+
+
+requirements: python3 python3-pip
 
 ### 模式
 #### 1.无参数 ：
@@ -54,27 +61,11 @@ requirement: python3 python3-pip
             --http_port  [port]  				    在指定端口代理http流量，若参数未添加，则默认代理8889端口
             --socks_port [port]  				    在指定端口代理socks5流量，如参数未添加，则默认代理11223端口
             --path [path of v2ray] / -p [path] 	    v2ray可执行文件路径，无参数则默认调用系统路径
+            --delete_node [choice]                  删除给定序号的节点
+            --delete_sub  [sub_name]                删除给定订阅的有关信息和相关文件
+            --show_info   [choice]                  显示给定序号节点的有关信息
 
-#####  		      2.1. --update  [url]  / -u [url]
-        不添加url参数则更新所有订阅;添加url参数则仅更新指定订阅
 
-##### 			2.2. --list_all
-        从已有文件中读取节点名称排序并打印
-
-##### 			2.3. --connect [choice] / -c [choice]
-        由序号将对应节点的有关信息加载至config.json,并重启v2ray
-
-##### 			2.4. --current
-        显示当前使用的节点名称
-
-##### 			2.5. --disconnect
-        关闭v2ray进程
-
-##### 			2.6. --http_port [port]
-        在指定端口代理http流量，默认8889端口
-
-##### 			2.7. --socks_port [port]
-        在指定端口代理socks流量，默认11223端口
 
 ### 预计产生文件
         1 groups.json               订阅保存文件

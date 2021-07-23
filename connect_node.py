@@ -136,20 +136,23 @@ def connect(choice, path="/usr/bin/v2ray", http_port=8889, socks_port=11223):
 
 
 def connect_default():
-    with open(CONFIG_DIR+'lastconnect.json', 'r', encoding='utf-8') as f:
-        info = json.load(f)
-    path = info['path']
-    path = path.replace("\\", '/')
+    if os.path.exists(CONFIG_DIR+'lastconnect.json'):
+        with open(CONFIG_DIR+'lastconnect.json', 'r', encoding='utf-8') as f:
+            info = json.load(f)
+        path = info['path']
+        path = path.replace("\\", '/')
 
-    if (("/" in path) and (not os.path.exists(path))):
-        print("No such file!")
-        return
-    if PLATFORM == 'linux':
-        os.system("exec %s -config %s > %s 2>&1 &" %
-                  (path, config_path, log_path))
-    elif PLATFORM == 'win32':
-        filepath, fullflname = os.path.split(path)
-        os.chdir(filepath)
-        os.system("start /b %s -config %s > %s 2>&1 &" %
-                  (fullflname, config_path, log_path))
-    print("Connect successfully")
+        if (("/" in path) and (not os.path.exists(path))):
+            print("No such file!")
+            return
+        if PLATFORM == 'linux':
+            os.system("exec %s -config %s > %s 2>&1 &" %
+                      (path, config_path, log_path))
+        elif PLATFORM == 'win32':
+            filepath, fullflname = os.path.split(path)
+            os.chdir(filepath)
+            os.system("start /b %s -config %s > %s 2>&1 &" %
+                      (fullflname, config_path, log_path))
+        print("Connect successfully")
+    else:
+        print('No default config file')

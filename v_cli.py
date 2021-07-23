@@ -8,6 +8,7 @@ import os
 import update_sub
 from settings import CONNECTIONS_DIR
 import del_func
+import json2vmess
 
 
 def get_default_config():
@@ -42,6 +43,8 @@ if __name__ == '__main__':
         del_func.delete_node(int(option.delete_node))
     elif option.delete_sub:
         del_func.delete_sub(option.delete_sub)
+    elif option.show_info:
+        json2vmess.show_info(int(option.show_info))
     elif (('--update' in argv_list) or ('-u' in argv_list)):
         if option.update is not None:
             print('Please input subscription name: ', end='')
