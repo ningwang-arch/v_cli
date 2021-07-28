@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 # -*- encoding: utf-8 -*-
 from parser_create import create_parser
 import connect_node
@@ -6,20 +6,18 @@ import sys
 import json
 import os
 import update_sub
-from settings import CONNECTIONS_DIR
+from settings import CONNECTIONS_DIR,CONFIG_DIR
 import del_func
 import json2vmess
 
 
 def get_default_config():
-    if not os.path.exists(CONNECTIONS_DIR):
-        os.makedirs(CONNECTIONS_DIR)
-    if os.path.exists(CONNECTIONS_DIR+'lastconnect.json'):
-        with open(CONNECTIONS_DIR+'lastconnect.json', 'r') as f:
+    if not os.path.exists(CONFIG_DIR):
+        os.makedirs(CONFIG_DIR)
+    last_dict={}
+    if os.path.exists(CONFIG_DIR+'lastconnect.json'):
+        with open(CONFIG_DIR+'lastconnect.json', 'r',encoding=“utf-8”) as f:
             last_dict = json.load(f)
-        path = last_dict['path']
-        http_port = last_dict['http_port']
-        socks_port = last_dict['socks_port']
     else:
         last_dict = {'path': '/usr/bin/v2ray',
                      'http_port': 8889, 'socks_port': 11223}
