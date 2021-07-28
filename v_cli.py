@@ -16,7 +16,7 @@ def get_default_config():
         os.makedirs(CONFIG_DIR)
     last_dict={}
     if os.path.exists(CONFIG_DIR+'lastconnect.json'):
-        with open(CONFIG_DIR+'lastconnect.json', 'r',encoding=“utf-8”) as f:
+        with open(CONFIG_DIR+'lastconnect.json', 'r',encoding='utf-8') as f:
             last_dict = json.load(f)
     else:
         last_dict = {'path': '/usr/bin/v2ray',
