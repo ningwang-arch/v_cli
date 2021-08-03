@@ -23,7 +23,7 @@ def get_sub_node_set():
 
 def generate_completer():
     res = get_sub_node_set()
-    nested_dict_base['update'] = set(res.keys())
+    nested_dict_base['update'] = set(res.keys()) if res else None
     nested_dict_base['connect'] = res
     nested_dict_base['info'] = res
     nested_dict_base['delete'] = res

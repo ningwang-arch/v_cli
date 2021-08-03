@@ -9,6 +9,9 @@ class UnknowProtocolException(Exception):
 
 def show_info(blocks: list):
     blocks = clean_blocks(blocks)
+    if not blocks:
+        print('No node currently')
+        return
     node_str = get_node_str(blocks[len(blocks)-1])
     info_list = convert(node_str)
     for info in info_list:

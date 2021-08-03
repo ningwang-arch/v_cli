@@ -6,7 +6,7 @@ import random
 import string
 
 from vm2obs import convert
-from settings import CONFIG_DIR, CONNECTIONS_DIR, clean_blocks
+from settings import CONFIG_DIR, CONNECTIONS_DIR, clean_blocks, load_default_config
 
 sub_path = CONFIG_DIR + 'groups.json'
 conn_path = CONFIG_DIR+'connections.json'
@@ -73,8 +73,9 @@ def convert_subcribe(str_b64, node_list=[]):
 
 
 def update_from_url(url, sub_name=''):
+    conf = load_default_config()
     node_name = ''
-    if os.path.exists(last_path):
+    if conf['node'] != '':
         node_name = update_lastconnection(ran_str=load_last_conn_node())
     info = {}
     node_list = []
@@ -100,7 +101,7 @@ def update_from_url(url, sub_name=''):
             with open(sub_path, 'w', encoding='utf-8') as f:
                 f.write(json.dumps(info, indent=4, ensure_ascii=False))
             print("Update subscription %s successfully" % (sub_name))
-            if os.path.exists(last_path):
+            if conf['node'] != '':
                 load_last_conn_node(
                     node=update_lastconnection(node_name=node_name))
             return
@@ -113,7 +114,7 @@ def update_from_url(url, sub_name=''):
     with open(sub_path, 'w', encoding='utf-8') as f:
         f.write(json.dumps(info, indent=4, ensure_ascii=False))
     print("Update subscription %s successfully" % (sub_name))
-    if os.path.exists(last_path):
+    if conf['node'] != '':
         load_last_conn_node(node=update_lastconnection(node_name=node_name))
 
 
@@ -127,6 +128,9 @@ def get_sub_url(sub_name):
 
 def update_from_sub():
     con = {}
+    if not os.path.exists(sub_path):
+        print('No subscription found')
+        return
     with open(sub_path, 'r', encoding='utf-8') as f:
         con = json.load(f)
     if not con.keys():

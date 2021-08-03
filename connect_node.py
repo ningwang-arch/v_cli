@@ -12,8 +12,12 @@ def print_node():
     cnt = 1
     sub_path = CONFIG_DIR+'groups.json'
     con_path = CONFIG_DIR+'connections.json'
+
     conn = {}
     sub = {}
+    if (not os.path.exists(sub_path)) or (not os.path.exists(con_path)):
+        print('No node currently')
+        return
     with open(sub_path, 'r', encoding='utf-8') as f:
         sub = json.load(f)
     with open(con_path, 'r', encoding='utf-8') as f:
@@ -54,7 +58,7 @@ def current():
         return
     with open(LAST_CONNECT, 'r', encoding='utf-8') as f:
         last_dict = json.load(f)
-    if 'node' not in last_dict:
+    if last_dict['node'] == '':
         print("No connection currently!")
     else:
         with open(con_path, mode='r') as f:
@@ -117,6 +121,9 @@ def connect_default():
         path = path.replace("\\", '/')
         if (("/" in path) and (not os.path.exists(path))):
             print("No such file!")
+            return
+        if not os.path.exists(config_path):
+            print('No default config file')
             return
         if PLATFORM == 'linux':
             os.system("exec %s -config %s > %s 2>&1 &" %

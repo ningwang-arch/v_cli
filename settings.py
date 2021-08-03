@@ -263,6 +263,8 @@ def load_TPL(stype):
 
 
 def default_config():
+    if not os.path.exists(CONFIG_DIR):
+        os.makedirs(CONFIG_DIR)
     if os.path.exists(LAST_CONNECT):
         return
     with open(LAST_CONNECT, 'w', encoding='utf-8') as f:
