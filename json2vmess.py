@@ -1,15 +1,15 @@
-from settings import CONFIG_DIR, CONNECTIONS_DIR
+from settings import CONFIG_DIR, CONNECTIONS_DIR, clean_blocks, get_node_str
 import json
 import base64
-from connect_node import convet_num_to_nodestr
 
 
 class UnknowProtocolException(Exception):
     pass
 
 
-def show_info(choice):
-    node_str = convet_num_to_nodestr(choice)
+def show_info(blocks: list):
+    blocks = clean_blocks(blocks)
+    node_str = get_node_str(blocks[len(blocks)-1])
     info_list = convert(node_str)
     for info in info_list:
         print('Group    %s\nName     %s\nProtocol %s\nAddress  %s\nPort     %s\nLink     %s' % (
@@ -140,8 +140,3 @@ def outbounds2vmess(outbound):
                     # print(json.dumps(vobj))
                     vobj.append(vobj_tmp)
     return vobj
-
-
-if __name__ == '__main__':
-    # get_group('zuwltsbpadjy')
-    show_info(98)

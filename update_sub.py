@@ -6,7 +6,7 @@ import random
 import string
 
 from vm2obs import convert
-from settings import CONFIG_DIR, CONNECTIONS_DIR
+from settings import CONFIG_DIR, CONNECTIONS_DIR, clean_blocks
 
 sub_path = CONFIG_DIR + 'groups.json'
 conn_path = CONFIG_DIR+'connections.json'
@@ -117,6 +117,14 @@ def update_from_url(url, sub_name=''):
         load_last_conn_node(node=update_lastconnection(node_name=node_name))
 
 
+def get_sub_url(sub_name):
+    with open(sub_path, 'r', encoding='utf-8') as f:
+        info = json.load(f)
+    for item in info:
+        if info[item]['displayName'] == sub_name.replace('%20', ' '):
+            return info[item]['subscriptionOption']['address']
+
+
 def update_from_sub():
     con = {}
     with open(sub_path, 'r', encoding='utf-8') as f:
@@ -127,3 +135,16 @@ def update_from_sub():
     for item in con.keys():
         url = con[item]['subscriptionOption']['address']
         update_from_url(url)
+
+
+def update(blocks: list):
+    blocks = clean_blocks(blocks)
+    if len(blocks) > 1:
+        print('Error format,should be `update sub_name` or `update [url]`')
+    if len(blocks) == 0:
+        update_from_sub()
+    elif blocks[0].startswith('https://') or blocks[0].startswith('http://'):
+        sub_name = input('Please input sub_name : ')
+        update_from_url(blocks[0], sub_name)
+    else:
+        update_from_url(get_sub_url(blocks[0]))

@@ -1,7 +1,6 @@
 import json
 import os
-from settings import CONFIG_DIR, CONNECTIONS_DIR
-from connect_node import convet_num_to_nodestr
+from settings import CONFIG_DIR, CONNECTIONS_DIR, clean_blocks, get_node_str
 
 
 def delete_outbounds(node_str: str):
@@ -26,10 +25,9 @@ def delete_outbounds(node_str: str):
         return ""
 
 
-def delete_node(choice: int):
+def delete_node(node_str):
     sub_path = CONFIG_DIR+'groups.json'
     sub_info = {}
-    node_str = convet_num_to_nodestr(choice)
     if node_str == '':
         print('Delete failed')
         return
@@ -69,3 +67,25 @@ def delete_sub(sub_name: str):
             return
     print('No such subscription')
     return
+
+
+def delete_func(blocks: list):
+    blocks = clean_blocks(blocks)
+    if (not blocks) or (len(blocks) > 2):
+        print('Error format,should be `delete sub_name` or `delete sub_name node_name`')
+        return
+    elif len(blocks) == 1:
+        sub_name = blocks[0]
+        choice = input('Be sure to delete subscription %s ? [y/n] ' % sub_name)
+        if choice == 'y' or choice == 'Y':
+            delete_sub(sub_name)
+        else:
+            return
+    elif len(blocks) == 2:
+        node_name = blocks[len(blocks)-1].replace('%20', ' ')
+        choice = input('Be sure to delete node %s ? [y/n] ' % node_name)
+        if choice == 'y' or choice == 'Y':
+            delete_node(get_node_str(node_name))
+        else:
+            return
+        pass

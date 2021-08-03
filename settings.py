@@ -18,6 +18,20 @@ CONFIG_DIR = get_home_path()+'/.config/v_cli/'
 CONNECTIONS_DIR = CONFIG_DIR+"connections/"
 LAST_CONNECT = CONFIG_DIR+"lastconnect.json"
 
+
+def get_default_config():
+    if not os.path.exists(CONFIG_DIR):
+        os.makedirs(CONFIG_DIR)
+    last_dict = {}
+    if os.path.exists(CONFIG_DIR+'lastconnect.json'):
+        with open(CONFIG_DIR+'lastconnect.json', 'r', encoding='utf-8') as f:
+            last_dict = json.load(f)
+    else:
+        last_dict = {'path': '/usr/bin/v2ray',
+                     'http_port': 8889, 'socks_port': 11223}
+    return last_dict
+
+
 TPL = {}
 TPL["outbounds"] = """
 [
@@ -223,10 +237,66 @@ TPL['socks_in'] = """
 
 """
 
+nested_dict_base = {
+    'all': None,
+    'connect': {},
+    'current': None,
+    'delete': {},
+    'disconnect': None,
+    'exit': None,
+    'info': {},
+    'path': {
+        'set': None,
+        'show': None
+    },
+    'port': {
+        'set': None,
+        'show': None
+    },
+    'update': {},
+}
+
 
 def load_TPL(stype):
     s = TPL[stype]
     return json.loads(s)
+
+
+def default_config():
+    if os.path.exists(LAST_CONNECT):
+        return
+    with open(LAST_CONNECT, 'w', encoding='utf-8') as f:
+        f.write(json.dumps({'node': '', 'http_port': '8889', 'socks_port': '11223',
+                'path': '/usr/bin/v2ray'}, ensure_ascii=False, indent=4))
+
+
+def get_node_str(node_name):
+    with open(CONFIG_DIR+'connections.json', 'r', encoding='utf-8') as f:
+        conn = json.load(f)
+    for item in conn:
+        if conn[item]['displayName'].replace(' ', '%20') == node_name:
+            return item
+
+
+def load_default_config():
+    if not os.path.exists(LAST_CONNECT):
+        return
+    with open(LAST_CONNECT, 'r', encoding='utf-8') as f:
+        return json.load(f)
+
+
+def clean_blocks(blocks: list):
+    for item in blocks.copy():
+        if item == '':
+            blocks.remove(item)
+    return blocks
+
+
+def trim(s):
+    import re
+    if s.startswith(' ') or s.endswith(' '):
+        return re.sub(r"^(\s+)|(\s+)$", "", s)
+    return s
 
 
 # 设置节点过滤规则,可自定义
@@ -234,3 +304,8 @@ def check_link(vmess: json):
     if vmess['net'] == "tcp":
         return False
     return True
+
+
+if __name__ == '__main__':
+
+    print(load_default_config())
