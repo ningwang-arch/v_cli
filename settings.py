@@ -276,7 +276,7 @@ def get_node_str(node_name):
     with open(CONFIG_DIR+'connections.json', 'r', encoding='utf-8') as f:
         conn = json.load(f)
     for item in conn:
-        if conn[item]['displayName'].replace(' ', '%20') == node_name:
+        if conn[item]['displayName'] == node_name.replace('%20', ' '):
             return item
 
 
