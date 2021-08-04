@@ -33,7 +33,7 @@ def path_about(blocks: list):
     if blocks[0] == 'show':
         print('Path : %s' % conf['path'])
     elif blocks[0] == 'set':
-        path = input('Please input v2ray path')
+        path = input('Please input v2ray path : ')
         conf['path'] = path
         with open(LAST_CONNECT, 'w', encoding='utf-8') as f:
             f.write(json.dumps(conf, ensure_ascii=False, indent=4))

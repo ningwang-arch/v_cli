@@ -1,9 +1,9 @@
 import base64
-import urllib3
 import os
 import json
 import random
 import string
+import requests
 
 from vm2obs import convert
 from settings import CONFIG_DIR, CONNECTIONS_DIR, clean_blocks, load_default_config
@@ -73,16 +73,18 @@ def convert_subcribe(str_b64, node_list=[]):
 
 
 def update_from_url(url, sub_name=''):
+    headers = {
+        'user-agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/92.0.4515.131 Safari/537.36'
+    }
     conf = load_default_config()
     node_name = ''
     if conf['node'] != '':
         node_name = update_lastconnection(ran_str=load_last_conn_node())
     info = {}
     node_list = []
-    http = urllib3.PoolManager()
-    response = http.request('GET', url)
-    if response.status == 200:
-        str_b64 = response.data.decode()
+    response = requests.get(url, headers == headers)
+    if response.status_code == 200:
+        str_b64 = response.content.decode()
     else:
         print('Invalid subscription link or network error. Update failed')
         return
