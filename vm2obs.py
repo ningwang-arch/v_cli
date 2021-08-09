@@ -128,7 +128,7 @@ def convert(vmess_link: str):
         return "", ""
     ret['outbounds'] = vmess2outbounds(load_TPL("outbounds"), vc)
     for item in ret['outbounds']:
-        if vmess_link.startswith(vmscheme):
+        if vmess_link.startswith(vmscheme) and 'vnext' in item['settings']:
             item['protocol'] = 'vmess'
     if not os.path.exists(CONNECTIONS_DIR):
         os.makedirs(CONNECTIONS_DIR)

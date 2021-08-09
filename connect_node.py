@@ -105,12 +105,21 @@ def connect_by_nodestr(node_str, path="/usr/bin/v2ray", http_port=8889, socks_po
     if PLATFORM == 'linux':
         os.system("exec %s -config %s > %s 2>&1 &" %
                   (path, config_path, log_path))
+
+        if os.system('pgrep -x v2ray >/dev/null 2>&1') == 0:
+            print("Connect  %s successfully" % (node_name))
+            return
     elif PLATFORM == 'win32':
         filepath, fullflname = os.path.split(path)
         os.chdir(filepath)
         os.system("start /b %s -config %s > %s 2>&1 &" %
                   (fullflname, config_path, log_path))
-    print("Connect  %s successfully" % (node_name))
+
+        if os.system('tasklist -v | findstr v2ray > NUL') != 1:
+            print("Connect  %s successfully" % (node_name))
+            return
+
+    print("Connect failed,check connect.log for details")
 
 
 def connect_default():
@@ -128,10 +137,18 @@ def connect_default():
         if PLATFORM == 'linux':
             os.system("exec %s -config %s > %s 2>&1 &" %
                       (path, config_path, log_path))
+
+            if os.system('pgrep -x v2ray >/dev/null 2>&1') == 0:
+                print("Connect successfully")
+            return
         elif PLATFORM == 'win32':
             os.system("start /b %s -config %s > %s 2>&1 &" %
                       (path, config_path, log_path))
-        print("Connect successfully")
+            if os.system('tasklist -v | findstr v2ray > NUL') != 1:
+                print("Connect successfully")
+            return
+
+        print('Connect failed,check connect.log for details')
     else:
         print('No default config file')
 
