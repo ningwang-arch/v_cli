@@ -26,7 +26,7 @@ It is recommended to build or run in a virtual environment.
 1. pip install pipenv
 2. pipenv install
 3. pipenv shell
-4. python v_cli.py
+4. python3 v_cli.py
 ```
 
  
