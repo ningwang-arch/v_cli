@@ -113,11 +113,23 @@ def parsevmess(vmesslink):
         raise Exception("vmess link invalid")
 
 
+def parseLink(link):
+    if link.startswith(vmscheme):
+        return parsevmess(link)
+    else:
+        return None
+
+
 def convert(vmess_link: str):
-    vc = parsevmess(vmess_link)
+    vc = parseLink(vmess_link)
+    if vc is None:
+        return "", ""
     if not check_link(vc):
         return "", ""
     ret['outbounds'] = vmess2outbounds(load_TPL("outbounds"), vc)
+    for item in ret['outbounds']:
+        if vmess_link.startswith(vmscheme):
+            item['protocol'] = 'vmess'
     if not os.path.exists(CONNECTIONS_DIR):
         os.makedirs(CONNECTIONS_DIR)
     ran_str = ''.join(random.sample(string.ascii_lowercase, 12))

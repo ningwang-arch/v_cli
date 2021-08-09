@@ -30,11 +30,13 @@ def convert(node_str):
     vmesses = parse_outbounds(jsonobj)
     info_list = []
     for v in vmesses:
+        _protocol = v['protocol']
+        v.pop('protocol')
         v['ps'] = node_name
-        link = "vmess://" + \
+        link = _protocol+"://" + \
             base64.b64encode(json.dumps(
-                v, sort_keys=True).encode('utf-8')).decode()
-        protocol = 'vmess+'+v['net']
+                v, sort_keys=False).encode('utf-8')).decode()
+        protocol = _protocol+'+'+v['net']
         info = {'Name': v['ps'], 'Group': groups_name, 'Protocol': protocol,
                 'Address': v['add'], 'Port': v['port'], 'Link': link}
         info_list.append(info)
@@ -72,6 +74,8 @@ def outbounds2vmess(outbound):
     _add = ""
     _port = ""
     _settings = outbound['settings']
+
+    _protocol = outbound['protocol']
 
     if "streamSettings" in outbound:
         sset = outbound["streamSettings"]
@@ -139,7 +143,7 @@ def outbounds2vmess(outbound):
                     # {"v": "", "ps": "", "add": "", "port": "", "id": "", "aid": "",
                     #     "net": "", "type": "", "host": "", "path": "", "tls": ""}
                     vobj_tmp = dict(v='2', ps="", add=_add,
-                                    port=_port, id=_id, aid=_aid, net=_net, type=_type, host=_host, path=_path, tls=_tls)
+                                    port=_port, id=_id, aid=_aid, net=_net, type=_type, host=_host, path=_path, tls=_tls, protocol=_protocol)
                     # print(json.dumps(vobj))
                     vobj.append(vobj_tmp)
     return vobj

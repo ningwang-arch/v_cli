@@ -1,6 +1,7 @@
 import json
 import os
 import sys
+import yaml
 
 
 PLATFORM = sys.platform
@@ -17,20 +18,8 @@ def get_home_path() -> str:
 CONFIG_DIR = get_home_path()+'/.config/v_cli/'
 CONNECTIONS_DIR = CONFIG_DIR+"connections/"
 LAST_CONNECT = CONFIG_DIR+"lastconnect.json"
-
-
-def get_default_config():
-    if not os.path.exists(CONFIG_DIR):
-        os.makedirs(CONFIG_DIR)
-    last_dict = {}
-    if os.path.exists(CONFIG_DIR+'lastconnect.json'):
-        with open(CONFIG_DIR+'lastconnect.json', 'r', encoding='utf-8') as f:
-            last_dict = json.load(f)
-    else:
-        last_dict = {'path': '/usr/bin/v2ray',
-                     'http_port': 8889, 'socks_port': 11223}
-    return last_dict
-
+RULES_YAML = CONFIG_DIR+'rules.yaml'
+HISTORY_PATH = CONFIG_DIR+'.history'
 
 TPL = {}
 TPL["outbounds"] = """
@@ -39,7 +28,7 @@ TPL["outbounds"] = """
         "mux": {
             "enabled": true
         },
-        "protocol": "vmess",
+        "protocol": "",
         "sendThrough": "0.0.0.0",
         "settings": {
             "vnext": [
@@ -301,13 +290,69 @@ def trim(s):
     return s
 
 
-# 设置节点过滤规则,可自定义
+def dict_copy(dict_input: dict, dict_output: dict):
+    for i in dict_input:
+        dict_output[i] = dict_input[i]
+
+
+def load_rules():
+    if not os.path.exists(RULES_YAML):
+        return
+    else:
+        with open(RULES_YAML, 'r', encoding='utf-8') as f:
+            from update_sub import group_current
+            rules = yaml.unsafe_load(f)
+            rules = rules[group_current] if group_current in rules else None
+            return rules
+
+
+def check_include(rules_include: dict, vmess: json):
+    if not rules_include:
+        return True
+    relation = rules_include['relation']
+    name = rules_include['name'] if 'name' in rules_include else []
+    protocol = rules_include['protocol'] if 'protocol' in rules_include else []
+    name_flag = True
+    protocol_flag = True
+
+    if protocol != vmess['net']:
+        protocol_flag = False
+
+    # or
+    if relation == 'or':
+        name_flag = any([i in vmess['ps'] for i in name])
+
+    # and
+    else:
+        name_flag = all([i in vmess['ps'] for i in name])
+    return (name_flag or protocol_flag)
+
+
+def check_exclude(rules_exclude, vmess):
+    if not rules_exclude:
+        return True
+    relation = rules_exclude['relation']
+    name = rules_exclude['name'] if 'name' in rules_exclude else []
+    protocol = rules_exclude['protocol'] if 'protocol' in rules_exclude else []
+    name_flag = True
+    protocol_flag = True
+
+    if protocol == vmess['net']:
+        protocol_flag = False
+
+    if relation == 'or':
+        name_flag = not any([i in vmess['ps'] for i in name])
+    else:
+        name_flag = not all([i in vmess['ps'] for i in name])
+
+    return (name_flag and protocol_flag)
+
+
 def check_link(vmess: json):
-    if vmess['net'] == "tcp":
-        return False
-    return True
-
-
-if __name__ == '__main__':
-
-    print(load_default_config())
+    rules = load_rules()
+    if rules is None:
+        return True
+    if rules['mode'] == 'include':
+        return check_include(rules, vmess)
+    else:
+        return check_exclude(rules, vmess)

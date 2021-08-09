@@ -1,0 +1,9 @@
+group1:  # group name
+  mode: exclude  # `exclude` or `include`
+  relation: or   # `or`  or `and`
+  name: # optional
+    - 时间
+    - 流量
+    - 官网
+  protocol: tcp # optional
+

@@ -11,6 +11,7 @@ from settings import CONFIG_DIR, CONNECTIONS_DIR, clean_blocks, load_default_con
 sub_path = CONFIG_DIR + 'groups.json'
 conn_path = CONFIG_DIR+'connections.json'
 last_path = CONFIG_DIR+'lastconnect.json'
+group_current = ''
 
 
 def load_last_conn_node(**kwargs):
@@ -73,6 +74,7 @@ def convert_subcribe(str_b64, node_list=[]):
 
 
 def update_from_url(url, sub_name=''):
+    global group_current
     headers = {
         'user-agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/92.0.4515.131 Safari/537.36'
     }
@@ -92,13 +94,14 @@ def update_from_url(url, sub_name=''):
     if (not os.path.exists(sub_path)) or (not os.path.getsize(sub_path)):
         with open(sub_path, 'w', encoding='utf-8') as f:
             f.write(json.dumps(info, indent=4, ensure_ascii=False))
-
+    group_current = sub_name
     with open(sub_path, 'r', encoding='utf-8') as f:
         info = json.load(f)
     for item in info.keys():
         if url == info[item]['subscriptionOption']['address']:
             node_list = info[item]['connections']
             sub_name = info[item]['displayName']
+            group_current = sub_name
             info[item]['connections'] = convert_subcribe(str_b64, node_list)
             with open(sub_path, 'w', encoding='utf-8') as f:
                 f.write(json.dumps(info, indent=4, ensure_ascii=False))
@@ -151,6 +154,8 @@ def update(blocks: list):
         update_from_sub()
     elif blocks[0].startswith('https://') or blocks[0].startswith('http://'):
         sub_name = input('Please input sub_name : ')
+        if sub_name == '':
+            sub_name = ''.join(random.sample(string.ascii_lowercase, 6))
         update_from_url(blocks[0], sub_name)
     else:
         update_from_url(get_sub_url(blocks[0]))
