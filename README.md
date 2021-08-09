@@ -18,7 +18,7 @@
 
 
 
-It is recommended to build or  in a virtual environment.
+It is recommended to build or run in a virtual environment.
 
 #### Run
 
