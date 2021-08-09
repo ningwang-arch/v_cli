@@ -23,7 +23,7 @@ It is recommended to build or run in a virtual environment.
 #### Run
 
 ```
-1. pip install pipenv
+1. pip3 install pipenv
 2. pipenv install
 3. pipenv shell
 4. python3 v_cli.py
@@ -34,10 +34,10 @@ It is recommended to build or run in a virtual environment.
 #### Build
 
 ```
-1. pip install pipenv
+1. pip3 install pipenv
 2. pipenv install
 3. pipenv shell
-4. pipenv run pip install pyinstaller
+4. pipenv run pip3 install pyinstaller
 5. pipenv run pyinstaller -Fw v_cli.py
 ```
 
